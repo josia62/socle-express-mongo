@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "lib": ["es5", "es6"],
     "target": "ESNext",
     "module": "CommonJS",
     "baseUrl": ".",
@@ -12,6 +13,8 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "types": ["vitest/globals"]
   },

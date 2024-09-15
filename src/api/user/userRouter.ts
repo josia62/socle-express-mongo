@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import { GetUserSchema, UserSchema } from "@/api/user/userModel";
 import { validateRequest } from "@/common/utils/httpHandlers";
-import { userController } from "./userController";
+import { userController } from "../../infrastructure/controller/user.controller";
 
 export const userRegistry = new OpenAPIRegistry();
 export const userRouter: Router = express.Router();

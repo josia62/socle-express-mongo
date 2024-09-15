@@ -3,7 +3,7 @@ import type { Mock } from "vitest";
 
 import type { User } from "@/api/user/userModel";
 import { UserRepository } from "@/api/user/userRepository";
-import { UserService } from "@/api/user/userService";
+import { UserService } from "@/service/applicatif/user.sa";
 
 vi.mock("@/api/user/userRepository");
 

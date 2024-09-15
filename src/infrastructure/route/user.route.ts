@@ -12,15 +12,17 @@ export const userRegistry = new OpenAPIRegistry();
 
 userRegistry.registerPath({
   method: "get",
-  path: "/users",
+  path: "/user",
   tags: ["User"],
   responses: createApiResponse(z.array(UserSchema), "Success"),
 });
 
 const userRoutes = () => {
-  //const router = () => genericRoute({ controller: userController, schema: userRequestDTOSchema });
-  const router = Router();
-  router.post("/josia", userController.create);
+  const router = genericRoute({
+    controller: userController,
+    schema: userRequestDTOSchema,
+    isSecured: false,
+  });
   return router;
 };
 

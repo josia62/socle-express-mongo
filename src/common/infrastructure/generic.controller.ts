@@ -7,8 +7,8 @@ import type { GenericSM } from "../service/generic.sm";
 
 export class GenericController<
   TDo extends ObjectLiteral,
-  TRequestDto,
-  TResponseDto,
+  TRequestDto extends object,
+  TResponseDto extends object,
   TSa extends GenericSA<
     TDo,
     TRequestDto,
@@ -143,6 +143,19 @@ export class GenericController<
       const found = await this.serviceSA.findOne(query);
 
       res.locals.data = found;
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  findAll = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const allEntities = await this.serviceSA.findAll();
+
+      res.locals.data = allEntities;
+      res.locals.statusCode = HttpStatus.OK;
 
       next();
     } catch (error) {

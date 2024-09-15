@@ -5,6 +5,7 @@ import {
   In,
   type ObjectLiteral,
   type DeepPartial,
+  type FindManyOptions,
 } from "typeorm";
 import type { GenericFactory } from "../constraint/factory/generic.factory";
 import type { GenericSM } from "./generic.sm";
@@ -95,6 +96,15 @@ export abstract class GenericSA<
     try {
       const result = await this.serviceSM.findOne(option);
       return this.factory.toResponseDto(result);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  async findAll(options: FindManyOptions<TDo> = {}): Promise<TResponseDto[]> {
+    try {
+      const results = await this.serviceSM.findAll(options);
+      return results.map((result) => this.factory.toResponseDto(result));
     } catch (error) {
       return Promise.reject(error);
     }

@@ -84,4 +84,12 @@ export abstract class GenericSM<TDo extends ObjectLiteral, TId, TRepository exte
   findOneRelation(option: any): Promise<any> {
     return this.repository.findOne(option);
   }
+
+  async findAll(options: FindManyOptions<TDo> = {}): Promise<TDo[]> {
+    try {
+      return await this.repository.find(options);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }

@@ -7,13 +7,13 @@ import { openAPIRouter } from "@/api-docs/openAPIRouter";
 import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
-import { env } from "@/common/utils/envConfig";
+import { configs } from "@/data/constants/configs";
 import { databaseConnect } from "./service/middleware/database";
 import { responseFormatter } from "./service/middleware/response-formatter";
 
 export const logger = pino({ name: "server start" });
 
-const { PORT } = env;
+const { PORT, CORS_ORIGIN } = configs;
 export const app = express();
 
 class App {
@@ -22,9 +22,11 @@ class App {
     app.set("timeout", 600000);
     app.use(express.urlencoded({ extended: true, limit: "25mb" }));
     app.use(express.json({ limit: "25mb" }));
-    app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+    app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
     app.use(rateLimiter);
     app.use(helmet());
+    const { default: passport } = await import("./service/middleware/passport");
+    app.use(passport.initialize());
   };
 
   private initRoutes = async () => {

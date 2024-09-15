@@ -4,7 +4,7 @@
     "indentStyle": "space",
     "lineWidth": 120
   },
-  "organizeImports": { "enabled": true },
+  "organizeImports": { "enabled": false },
   "linter": {
     "enabled": true,
     "rules": {

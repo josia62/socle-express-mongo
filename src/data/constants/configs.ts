@@ -1,29 +1,27 @@
-require("dotenv-flow").config();
+import dotenv from "dotenv";
+import { cleanEnv, str, num, host, port } from "envalid";
 
-const {
-  UPLOAD_DIR: uploadDir,
-  PORT: port,
-  JWT_SECRET: jwtSecret,
-  JWT_EXPIRATION: jwtExpiration,
-  JWT_REFRESH_TOKEN_EXPIRATION: jwtRefreshTokenExpiration,
-  PWD_RESET_EXPIRATION: passwordResetExpiration,
-  PWD_RESET_SECRET: passwordResetSecret,
-  EMAIL_USER: emailUser,
-  EMAIL_PASSWORD: emailPassword,
-  MONGO_URI: mongoUri,
-  HASH_KEY: hashKeyCrypto,
-} = process.env;
+// Load .env variables into process.env
+dotenv.config();
 
-export const configs = {
-  hashKeyCrypto,
-  mongoUri,
-  emailUser,
-  emailPassword,
-  uploadDir,
-  port,
-  jwtSecret,
-  jwtExpiration,
-  jwtRefreshTokenExpiration,
-  passwordResetExpiration,
-  passwordResetSecret,
-};
+// Validate and clean environment variables
+export const configs = cleanEnv(process.env, {
+  NODE_ENV: str({ default: "development", choices: ["development", "production", "test"] }),
+  HOST: host({ default: "localhost" }),
+  PORT: port({ default: 3000 }),
+  CORS_ORIGIN: str({ default: "http://localhost:3000" }),
+  COMMON_RATE_LIMIT_MAX_REQUESTS: num({ default: 1000 }),
+  COMMON_RATE_LIMIT_WINDOW_MS: num({ default: 1000 }),
+
+  DB_HOST: host({ default: "localhost" }),
+  DB_PORT: port({ default: 5432 }),
+  DB_USER: str({ default: "postgres" }),
+  DB_PASS: str({ default: "" }),
+  DB_NAME: str({ default: "local" }),
+
+  JWT_EXPIRATION: str({ default: "3600s" }),
+  JWT_REFRESH_TOKEN_EXPIRATION: str({ default: "3600s" }),
+  JWT_SECRET: str({ default: "S3C4ET" }),
+  PWD_RESET_EXPIRATION: str({ default: "3600s" }),
+  PWD_RESET_SECRET: str({ default: "pwdR35et" }),
+});

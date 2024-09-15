@@ -1,19 +1,10 @@
-import type { Request, RequestHandler, Response } from "express";
+import type { User } from "../../data/do/user.do";
+import type { UserRequestDTO } from "../../data/dto/user/user-request.dto";
+import type { UserResponseDTO } from "../../data/dto/user/user-response.dto";
+import { GenericController } from "@/common/infrastructure/generic.controller";
+import type { UserSA } from "@/service/applicatif/user.sa";
+import { userSA } from "@/service/applicatif/user.sa";
 
-import { handleServiceResponse } from "@/common/utils/httpHandlers";
-import { userService } from "@/service/applicatif/user.sa";
+class UserController extends GenericController<User, UserRequestDTO, UserResponseDTO, UserSA> {}
 
-class UserController {
-  public getUsers: RequestHandler = async (_req: Request, res: Response) => {
-    const serviceResponse = await userService.findAll();
-    return handleServiceResponse(serviceResponse, res);
-  };
-
-  public getUser: RequestHandler = async (req: Request, res: Response) => {
-    const id = Number.parseInt(req.params.id as string, 10);
-    const serviceResponse = await userService.findById(id);
-    return handleServiceResponse(serviceResponse, res);
-  };
-}
-
-export const userController = new UserController();
+export const userController = new UserController(userSA);

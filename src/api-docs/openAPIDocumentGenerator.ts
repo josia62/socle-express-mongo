@@ -1,4 +1,4 @@
-import { userRegistry } from "@/api/user/userRouter";
+import { userRegistry } from "@/infrastructure/route/user.route";
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 
 export function generateOpenAPIDocument() {

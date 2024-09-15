@@ -1,11 +1,18 @@
-import { type FindOptionsWhere, type Repository, getRepository, In, type ObjectLiteral } from "typeorm";
+import {
+  type FindOptionsWhere,
+  type Repository,
+  getRepository,
+  In,
+  type ObjectLiteral,
+  type DeepPartial,
+} from "typeorm";
 import type { GenericFactory } from "../constraint/factory/generic.factory";
 import type { GenericSM } from "./generic.sm";
 
 export abstract class GenericSA<
   TDo extends ObjectLiteral,
-  TRequestDto,
-  TResponseDto,
+  TRequestDto extends object,
+  TResponseDto extends object,
   TSm extends GenericSM<TDo, number | string, Repository<TDo>>,
   TFactory extends GenericFactory<TDo, TRequestDto, TResponseDto>,
 > {
@@ -22,7 +29,6 @@ export abstract class GenericSA<
   async create(dto: TRequestDto | TRequestDto[]): Promise<TResponseDto> {
     try {
       const entity = this.factory.toDo(dto);
-      // @ts-ignore
       const result = await this.serviceSM.create(entity);
       return this.factory.toResponseDto(result);
     } catch (error) {

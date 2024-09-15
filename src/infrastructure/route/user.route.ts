@@ -18,9 +18,9 @@ userRegistry.registerPath({
 });
 
 const userRoutes = () => {
-  const router = () => genericRoute({ controller: userController, schema: userRequestDTOSchema });
-  // const router = Router();
-  //router.get("/", userController.getUsers);
+  //const router = () => genericRoute({ controller: userController, schema: userRequestDTOSchema });
+  const router = Router();
+  router.post("/josia", userController.create);
   return router;
 };
 

@@ -8,9 +8,10 @@ import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
 import { configs } from "@/data/constants/configs";
 import { databaseConnect } from "./service/middleware/database";
-import { logger } from "./common/logger";
+
 import { responseFormatter } from "./service/middleware/response-formatter";
 
+import { logger } from "./common/logger";
 const { PORT, CORS_ORIGIN } = configs;
 export const app = express();
 

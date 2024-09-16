@@ -3,6 +3,7 @@ export interface UserResponseDTO {
   firstName: string;
   lastName: string;
   age: number;
+  email: string;
   socketId: string;
   createdAt: Date;
   updatedAt: Date;

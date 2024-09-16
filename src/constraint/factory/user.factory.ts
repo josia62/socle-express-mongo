@@ -3,16 +3,22 @@ import type { User } from "../../data/do/user.do";
 import type { UserRequestDTO } from "../../data/dto/user/user-request.dto";
 import type { UserResponseDTO } from "../../data/dto/user/user-response.dto";
 
-const schema = {
+const commonSchema = {
+  email: "email",
   firstName: "firstName",
   lastName: "lastName",
   age: "age",
 };
 
+const schema = {
+  ...commonSchema,
+  password: "password",
+};
+
 const responseSchema = {
   id: "id",
   socketId: "socketId",
-  ...schema,
+  ...commonSchema,
   createdAt: "createdAt",
   updatedAt: "updatedAt",
 };

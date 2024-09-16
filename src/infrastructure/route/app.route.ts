@@ -3,6 +3,7 @@ import { Router } from "express";
 import multer from "multer";
 
 import { userRouter } from "./user.route";
+import { authenticationRouter } from "./auth.route";
 
 export const uploadFilePath = path.resolve(__dirname, "../..", "file/uploads");
 
@@ -17,6 +18,7 @@ multer({
 
 const appRoutes = () => {
   const router = Router();
+  router.use("/auth", authenticationRouter);
   router.use("/user", userRouter);
   return router;
 };

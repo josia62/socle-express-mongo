@@ -1,10 +1,13 @@
 import * as jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
+import { Strategy as LocalStrategy } from "passport-local";
 
 import { configs } from "../../../data/constants/configs";
 import { Exception } from "../exception-handler";
 import { HttpStatus } from "../../../data/constants/http-status";
 import { userSA } from "../../applicatif/user.sa";
+import { userSM } from "@/service/metier/user.sm";
 
 export const verifyToken = (token: string, secret: string): Promise<any> =>
   new Promise((resolve, reject) => {
@@ -46,6 +49,29 @@ export const jwtStrategy = new JwtStrategy(
       }
     } catch (error) {
       done(error);
+    }
+  },
+);
+
+export const frontLocalStrategy = new LocalStrategy(
+  {
+    usernameField: "email",
+    passwordField: "password",
+  },
+  async (email, password, done) => {
+    try {
+      const user = await userSM.findOne({ email });
+      if (!user) {
+        return done({ message: "Email non trouvé dans la base" });
+      }
+      const passwordMatch = bcrypt.compareSync(password, user.password);
+      if (!passwordMatch) {
+        return done({ message: "Mot de passe incorrect" });
+      }
+      const { id } = user;
+      return done(null, { id, email });
+    } catch (error) {
+      return done(error);
     }
   },
 );

@@ -1,10 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, Column } from "typeorm";
+import { Base } from "./base.do";
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
-
+export class User extends Base {
   @Column("varchar")
   firstName: string;
 
@@ -13,4 +11,7 @@ export class User {
 
   @Column("int")
   age: number;
+
+  @Column("varchar", { nullable: true, default: "" })
+  socketId?: string;
 }

@@ -37,6 +37,7 @@
     "pg": "^8.12.0",
     "pino-http": "^10.0.0",
     "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.0.1",
     "swagger-ui-express": "^5.0.0",
     "typeorm": "^0.3.20",
     "zod": "^3.22.4"
@@ -64,16 +65,10 @@
     "vitest": "^2.0.0"
   },
   "lint-staged": {
-    "*.{js,ts,cjs,mjs,d.cts,d.mts,json,jsonc}": [
-      "biome check --apply --no-errors-on-unmatched"
-    ]
+    "*.{js,ts,cjs,mjs,d.cts,d.mts,json,jsonc}": ["biome check --apply --no-errors-on-unmatched"]
   },
   "tsup": {
-    "entry": [
-      "src",
-      "!src/**/__tests__/**",
-      "!src/**/*.test.*"
-    ],
+    "entry": ["src", "!src/**/__tests__/**", "!src/**/*.test.*"],
     "splitting": false,
     "sourcemap": true,
     "clean": true

@@ -1,4 +1,4 @@
-import { logger } from "@/app";
+import { logger } from "@/common/logger";
 import { AppDataSource } from "../../data-source";
 
 export const databaseConnect = async () => {

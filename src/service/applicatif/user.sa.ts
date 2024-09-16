@@ -8,8 +8,12 @@ import type { UserFactory } from "../../constraint/factory/user.factory";
 import { userFactory } from "../../constraint/factory/user.factory";
 
 export class UserSA extends GenericSA<User, UserRequestDTO, UserResponseDTO, UserSM, UserFactory> {
-  getUserById(userId: string) {
+  async getUserById(userId: string) {
     return this.serviceSM.findOne({ id: userId });
+  }
+
+  async updateSocketId(id: string, socketId: string) {
+    await this.serviceSM.update(id, { socketId });
   }
 }
 

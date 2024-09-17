@@ -10,6 +10,7 @@ import { configs } from "@/data/constants/configs";
 import { databaseConnect } from "./service/middleware/database";
 import { logger } from "./common/logger";
 import { responseFormatter } from "./service/middleware/response-formatter";
+import { exceptionHandler } from "./service/middleware/exception-handler";
 
 const { PORT, CORS_ORIGIN } = configs;
 export const app = express();
@@ -33,6 +34,7 @@ class App {
     app.use("/api", appRouter, responseFormatter);
     app.use(openAPIRouter);
     app.use(errorHandler());
+    app.use(exceptionHandler);
   };
 
   public init = async () => {

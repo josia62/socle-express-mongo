@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type * as Joi from "joi";
-import { schemaValidator } from "../../service/middleware/joi";
+import { schemaValidator } from "../../service/middleware/shemaValidator";
 
 import { conditionnalJwtPassport } from "../../service/middleware/passport/conditionnal-jwt-passport";
 import { responseFormatter } from "../../service/middleware/response-formatter";

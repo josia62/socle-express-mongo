@@ -6,7 +6,6 @@ import { z } from "zod";
 import { genericRoute } from "../../common/infrastructure/generic.route";
 import { userController } from "../controller/user.controller";
 import { UserSchema } from "@/constraint/validator/zod/user.validator";
-import { userRequestDTOSchema } from "@/constraint/validator/joi/user.validator";
 
 export const userRegistry = new OpenAPIRegistry();
 
@@ -20,7 +19,7 @@ userRegistry.registerPath({
 const userRoutes = () => {
   const router = genericRoute({
     controller: userController,
-    schema: userRequestDTOSchema,
+    schema: UserSchema,
     isSecured: false,
   });
   return router;

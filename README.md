@@ -1,4 +1,4 @@
-# Express TypeORM POSTGRES
+# Express TypeORM
 
 ## Features
 

@@ -3,7 +3,7 @@ import { DataSource } from "typeorm";
 import { User } from "./data/do/user.do";
 import { configs } from "./data/constants/configs";
 
-const { DB_HOST, DB_NAME, DB_PORT, DB_PASS, DB_USER, DB_TYPE } = configs;
+const { DB_HOST, DB_NAME, DB_PORT, DB_PASS, DB_USER, DB_TYPE, NODE_ENV } = configs;
 
 export const AppDataSource = new DataSource({
   type: DB_TYPE as "postgres" | "mysql" | "mariadb" | "sqlite" | "mssql",
@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
   username: DB_USER,
   password: DB_PASS,
   database: DB_NAME,
-  synchronize: true,
+  synchronize: NODE_ENV !== "production",
   logging: false,
   entities: [User],
   migrations: [],

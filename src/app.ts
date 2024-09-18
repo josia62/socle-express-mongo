@@ -12,7 +12,7 @@ import { logger } from "./common/logger";
 import { responseFormatter } from "./service/middleware/response-formatter";
 import { exceptionHandler } from "./service/middleware/exception-handler";
 
-const { PORT, CORS_ORIGIN } = configs;
+const { PORT, CORS_ORIGIN, NODE_ENV } = configs;
 export const app = express();
 
 class App {
@@ -32,7 +32,7 @@ class App {
     app.use(requestLogger);
     const { appRouter } = await import("./infrastructure/route/app.route");
     app.use("/api", appRouter, responseFormatter);
-    app.use(openAPIRouter);
+    NODE_ENV !== "production" && app.use(openAPIRouter);
     app.use(errorHandler());
     app.use(exceptionHandler);
   };

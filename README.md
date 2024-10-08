@@ -1,4 +1,4 @@
-# Express TypeORM
+# Express MONGO
 
 ## Features
 

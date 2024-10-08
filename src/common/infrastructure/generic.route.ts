@@ -1,5 +1,5 @@
 import { Router } from "express";
-import type * as Joi from "joi";
+import type { ZodSchema } from "zod";
 import { schemaValidator } from "../../service/middleware/shemaValidator";
 
 import { conditionnalJwtPassport } from "../../service/middleware/passport/conditionnal-jwt-passport";
@@ -7,13 +7,14 @@ import { responseFormatter } from "../../service/middleware/response-formatter";
 
 export type RouteOption = {
   controller: any;
-  schema?: Joi.Schema;
+  schema?: any;
   router?: Router;
   isSecured?: boolean;
+  name?: string;
 };
 
 export const genericRoute = (option: RouteOption) => {
-  const { controller, isSecured = false, router = Router(), schema = null } = option;
+  const { controller, isSecured = false, router = Router(), schema = null, name } = option;
 
   router.get("/findall", conditionnalJwtPassport(isSecured), controller.findAll, responseFormatter);
 
@@ -25,9 +26,10 @@ export const genericRoute = (option: RouteOption) => {
 
   router
     .route("")
-    .get(conditionnalJwtPassport(isSecured), controller.findAll, responseFormatter)
+    .get(conditionnalJwtPassport(isSecured), controller.findMany, responseFormatter)
     .post(conditionnalJwtPassport(isSecured), schemaValidator(schema), controller.create, responseFormatter);
 
   router.get("/one", conditionnalJwtPassport(isSecured), controller.findOne, responseFormatter);
+
   return router;
 };

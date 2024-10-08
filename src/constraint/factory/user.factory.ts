@@ -1,5 +1,5 @@
 import { GenericFactory } from "../../common/constraint/factory/generic.factory";
-import type { User } from "../../data/do/user.do";
+import type { UserDO } from "../../data/do/user.do";
 import type { UserRequestDTO } from "../../data/dto/user/user-request.dto";
 import type { UserResponseDTO } from "../../data/dto/user/user-response.dto";
 
@@ -23,6 +23,6 @@ const responseSchema = {
   updatedAt: "updatedAt",
 };
 
-export class UserFactory extends GenericFactory<User, UserRequestDTO, UserResponseDTO> {}
+export class UserFactory extends GenericFactory<UserDO, UserRequestDTO, UserResponseDTO> {}
 
 export const userFactory = new UserFactory(schema, schema, responseSchema);

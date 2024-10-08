@@ -1,12 +1,11 @@
-import { PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import mongoose from "mongoose";
 
-export abstract class Base {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+export const baseSchema = new mongoose.Schema({
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
 
-  @CreateDateColumn({ type: "timestamp" })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: "timestamp" })
-  updatedAt: Date;
-}
+baseSchema.pre("save", function (next) {
+  this.updatedAt = new Date();
+  next();
+});

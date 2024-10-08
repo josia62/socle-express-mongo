@@ -1,38 +1,31 @@
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import { Entity, Column, BeforeInsert, BeforeUpdate } from "typeorm";
-import { Base } from "./base.do";
 
-@Entity()
-export class User extends Base {
-  @Column("varchar")
-  firstName: string;
-
-  @Column("varchar")
-  lastName: string;
-
-  @Column("varchar")
+import { baseSchema } from "./base.do";
+export type UserDO = {
   email: string;
-
-  @Column("text")
   password: string;
-
-  @Column("int")
-  age: number;
-
-  @Column("varchar", { nullable: true, default: "" })
+  firstName: string;
+  lastName: string;
   socketId?: string;
+};
 
-  @BeforeInsert()
-  async hashPassword() {
-    if (this.password) {
-      this.password = await bcrypt.hash(this.password, 10);
-    }
-  }
+export const userSchema = new mongoose.Schema<UserDO>({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  socketId: { type: String, required: false, default: "" },
+});
 
-  @BeforeUpdate()
-  async hashPasswordUpdate() {
-    if (this.password && !this.password.startsWith("$2a$")) {
-      this.password = await bcrypt.hash(this.password, 10);
-    }
+userSchema.pre("save", function (next) {
+  if (this.password && this.isModified("password")) {
+    this.password = bcrypt.hashSync(this.password);
   }
-}
+  next();
+});
+
+userSchema.add(baseSchema);
+export const userModelName = "User";
+
+export const UserModel = mongoose.model(userModelName, userSchema);

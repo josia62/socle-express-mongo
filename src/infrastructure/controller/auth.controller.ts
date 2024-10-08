@@ -8,7 +8,7 @@ import { passportStrategies } from "../../service/middleware/passport/passport-s
 
 class AuthenticationController {
   login = (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate(passportStrategies.frontLocal, { session: false }, async (err, user) => {
+    passport.authenticate(passportStrategies.frontLocal, { session: false }, async (err: any, user: any) => {
       if (err && !user) {
         res.locals.statusCode = HttpStatus.BAD_REQUEST;
         next(err);

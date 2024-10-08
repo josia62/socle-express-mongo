@@ -91,7 +91,7 @@ export abstract class GenericController<
    */
   findMany = async (req: Request, res: Response, next: NextFunction) => {
     const {
-      query: { page = 1, siMONGO_URIze = 10, sort = "createdAt", direction = "asc", light, ...queries },
+      query: { page = 1, size = 10, sort = "createdAt", direction = "asc", light, ...queries },
     } = req;
     try {
       const dtos = await this.sa.findMany({

@@ -1,26 +1,20 @@
-import type { Request, Response, NextFunction } from "express";
-import type { Repository, ObjectLiteral } from "typeorm";
+import type { NextFunction, Request, Response } from "express";
+
 import { HttpStatus } from "../../data/constants/http-status";
 import type { GenericFactory } from "../constraint/factory/generic.factory";
 import type { GenericSA } from "../service/generic.sa";
 import type { GenericSM } from "../service/generic.sm";
 
-export class GenericController<
-  TDo extends ObjectLiteral,
-  TRequestDto extends object,
-  TResponseDto extends object,
-  TSa extends GenericSA<
-    TDo,
-    TRequestDto,
-    TResponseDto,
-    GenericSM<TDo, string | number, Repository<TDo>>,
-    GenericFactory<TDo, TRequestDto, TResponseDto>
-  >,
+export abstract class GenericController<
+  TDO extends object,
+  TRequestDTO extends object,
+  TResponseDTO,
+  TSA extends GenericSA<TDO, TRequestDTO, TResponseDTO, GenericSM<TDO>, GenericFactory<TDO, TRequestDTO, TResponseDTO>>,
 > {
-  serviceSA: TSa;
+  protected sa: TSA;
 
-  constructor(serviceSA: TSa) {
-    this.serviceSA = serviceSA;
+  constructor(sa: TSA) {
+    this.sa = sa;
   }
 
   /**
@@ -29,31 +23,10 @@ export class GenericController<
   create = async (req: Request, res: Response, next: NextFunction) => {
     const { body } = req;
     try {
-      const created = await this.serviceSA.create(body);
+      const created = await this.sa.create(body);
 
       res.locals.data = created;
       res.locals.statusCode = HttpStatus.CREATED;
-
-      next();
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
-   * WS gérant la mise à jour d'une entité
-   */
-  update = async (req: Request, res: Response, next: NextFunction) => {
-    const {
-      body,
-      params: { id },
-    } = req;
-
-    try {
-      const updated = await this.serviceSA.update(id, body);
-
-      res.locals.data = updated;
-      res.locals.statusCode = HttpStatus.OK;
 
       next();
     } catch (error) {
@@ -66,9 +39,8 @@ export class GenericController<
       body,
       params: { id },
     } = req;
-
     try {
-      const updated = await this.serviceSA.partialUpdate(id, body);
+      const updated = await this.sa.partialUpdate(id, body);
 
       res.locals.data = updated;
 
@@ -81,32 +53,12 @@ export class GenericController<
   /**
    * WS gérant la suppression d'une entité
    */
-  deleteMany = async (req: Request, res: Response, next: NextFunction) => {
-    const {
-      body: { ids },
-    } = req;
-
-    try {
-      const response = await this.serviceSA.deleteMany(ids);
-
-      res.locals.data = response;
-
-      next();
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  /**
-   * WS gérant la suppression des entités
-   */
   delete = async (req: Request, res: Response, next: NextFunction) => {
     const {
       params: { id },
     } = req;
-
     try {
-      const response = await this.serviceSA.delete(id);
+      const response = await this.sa.delete(id);
 
       res.locals.data = response;
 
@@ -124,7 +76,7 @@ export class GenericController<
       params: { id },
     } = req;
     try {
-      const found = await this.serviceSA.findById(id);
+      const found = await this.sa.findById(id);
 
       res.locals.data = found;
 
@@ -135,27 +87,60 @@ export class GenericController<
   };
 
   /**
-   * WS retournant le document répondant aux critères spécifiés
+   * WS retournant la liste de toutes les entités
    */
-  findOne = async (req: Request, res: Response, next: NextFunction) => {
-    const { query } = req;
+  findMany = async (req: Request, res: Response, next: NextFunction) => {
+    const {
+      query: { page = 1, siMONGO_URIze = 10, sort = "createdAt", direction = "asc", light, ...queries },
+    } = req;
     try {
-      const found = await this.serviceSA.findOne(query);
-
-      res.locals.data = found;
-
+      const dtos = await this.sa.findMany({
+        queries,
+        limit: size,
+        skip: (page - 1) * size,
+        sort: { [sort]: direction },
+        light: JSON.parse(light || "true"),
+      });
+      res.locals.data = dtos;
       next();
     } catch (error) {
       next(error);
     }
   };
 
+  /**
+   * WS retournant toutes les entités sans pagination
+   */
+
   findAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const allEntities = await this.serviceSA.findAll();
+      const dtos = await this.sa.findAll();
+      res.locals.data = dtos;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
 
-      res.locals.data = allEntities;
-      res.locals.statusCode = HttpStatus.OK;
+  /**
+   * WS retournant le document répondant aux critères spécifiés
+   */
+  findOne = async (req: Request, res: Response, next: NextFunction) => {
+    const {
+      query: { page, rowPerPage, light, direction, sortField, match, recherche, ...queries },
+    } = req;
+    try {
+      const found = await this.sa.findOne({
+        search: recherche,
+        match,
+        queries,
+      });
+
+      if (Array.isArray(found) && found.length > 0) {
+        res.locals.data = found.shift();
+      } else {
+        res.locals.data = false;
+      }
 
       next();
     } catch (error) {

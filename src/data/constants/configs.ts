@@ -13,13 +13,7 @@ export const configs = cleanEnv(process.env, {
   COMMON_RATE_LIMIT_MAX_REQUESTS: num({ default: 1000 }),
   COMMON_RATE_LIMIT_WINDOW_MS: num({ default: 1000 }),
 
-  DB_TYPE: str({ default: "postgres" }),
-  DB_HOST: host({ default: "localhost" }),
-  DB_PORT: port({ default: 5432 }),
-  DB_USER: str({ default: "postgres" }),
-  DB_PASS: str({ default: "" }),
-  DB_NAME: str({ default: "" }),
-
+  MONGO_URI: str({ default: "" }),
   JWT_EXPIRATION: str({ default: "3600s" }),
   JWT_REFRESH_TOKEN_EXPIRATION: str({ default: "3600s" }),
   JWT_SECRET: str({ default: "" }),

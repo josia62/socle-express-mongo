@@ -1,110 +1,110 @@
-import {
-  type FindOptionsWhere,
-  type Repository,
-  getRepository,
-  In,
-  type ObjectLiteral,
-  type DeepPartial,
-  type FindManyOptions,
-} from "typeorm";
+import type { FilterQuery } from "mongoose";
 import type { GenericFactory } from "../constraint/factory/generic.factory";
 import type { GenericSM } from "./generic.sm";
+import type { QueryFilter, FilteredQueryFilter } from "./type";
 
 export abstract class GenericSA<
-  TDo extends ObjectLiteral,
-  TRequestDto extends object,
-  TResponseDto extends object,
-  TSm extends GenericSM<TDo, number | string, Repository<TDo>>,
-  TFactory extends GenericFactory<TDo, TRequestDto, TResponseDto>,
+  TDO extends object,
+  TRequestDTO extends object,
+  TResponseDTO,
+  TSM extends GenericSM<TDO>,
+  TFactory extends GenericFactory<TDO, TRequestDTO, TResponseDTO>,
 > {
-  protected serviceSM: TSm;
+  protected sm: TSM;
+
   protected factory: TFactory;
-  protected name: string;
 
-  constructor(serviceSM: TSm, factory: TFactory, name: string) {
-    this.serviceSM = serviceSM;
+  constructor(sm: TSM, factory: TFactory) {
+    this.sm = sm;
     this.factory = factory;
-    this.name = name;
   }
 
-  async create(dto: TRequestDto | TRequestDto[]): Promise<TResponseDto> {
+  async create(dto: TRequestDTO): Promise<TResponseDTO> {
     try {
-      const entity = this.factory.toDo(dto);
-      const result = await this.serviceSM.create(entity);
-      return this.factory.toResponseDto(result);
+      const entity = this.factory.toDO(dto);
+      const result = await this.sm.create(entity);
+
+      return this.factory.toResponseDTO(result);
     } catch (error) {
       return Promise.reject(error);
     }
   }
 
-  async update(id: number | string, dto: TRequestDto): Promise<any> {
+  async partialUpdate(id: string, dto: TRequestDTO) {
     try {
-      const entity = this.factory.toDo(dto);
-      // @ts-ignore
-      const result = await this.serviceSM.update(id, entity);
-      return this.factory.toResponseDto(result);
+      const partialEntity = this.factory.toDO(dto);
+      await this.sm.partialUpdate(id, partialEntity);
+
+      return id;
     } catch (error) {
       return Promise.reject(error);
     }
   }
 
-  async partialUpdate(id: number | string, partialEntity: DeepPartial<TDo>): Promise<any> {
+  async delete(id: string) {
     try {
-      const result = await this.serviceSM.update(id, partialEntity);
-      return this.factory.toResponseDto(result);
+      await this.sm.delete(id);
+
+      return id;
     } catch (error) {
       return Promise.reject(error);
     }
   }
 
-  delete(id: number | string): Promise<any> {
-    return this.serviceSM.delete(id);
-  }
-
-  deleteMany(ids: (number | string)[]): Promise<any> {
-    return this.serviceSM.deleteMany(ids);
-  }
-
-  async updateMany(ids: (number | string)[]): Promise<any> {
-    return await getRepository(this.name)
-      .createQueryBuilder()
-      .update()
-      .set({ isdelete: 1 })
-      .where("id IN (:...ids)", { ids })
-      .execute();
-  }
-
-  async updateAll(where: FindOptionsWhere<TDo>): Promise<any> {
-    return await getRepository(this.name)
-      .createQueryBuilder()
-      .update()
-      .set({ isdelete: 1 })
-      .where(where ?? {})
-      .execute();
-  }
-
-  async findById(id: number | string): Promise<TResponseDto | null> {
+  async findById(id: string) {
     try {
-      const result = await this.serviceSM.findById(id);
-      return this.factory.toResponseDto(result);
+      const result = await this.sm.findById(id);
+
+      return this.factory.toResponseDTO(result);
     } catch (error) {
       return Promise.reject(error);
     }
   }
 
-  async findOne(option: FindOptionsWhere<TDo>): Promise<TResponseDto | null> {
+  async findOne(query: FilterQuery<TDO>) {
     try {
-      const result = await this.serviceSM.findOne(option);
-      return this.factory.toResponseDto(result);
+      const result = await this.sm.findOne(query);
+
+      return this.factory.toResponseDTO(result);
     } catch (error) {
       return Promise.reject(error);
     }
   }
 
-  async findAll(options: FindManyOptions<TDo> = {}): Promise<TResponseDto[]> {
+  async findAll() {
     try {
-      const results = await this.serviceSM.findAll(options);
-      return results.map((result) => this.factory.toResponseDto(result));
+      const entities: any = await this.sm.findAll();
+      return this.factory.toResponseDTO(entities);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  async findMany(filter: QueryFilter<TDO>) {
+    try {
+      const entities = await this.sm.findMany(filter);
+      const total = await this.sm.count(filter.queries);
+      return {
+        total,
+        page: filter.skip,
+        size: filter.limit,
+        items: this.factory.toResponseDTO(entities),
+      };
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  async filteredFindMany(filter: FilteredQueryFilter<TDO>) {
+    try {
+      const entities = await this.sm.filteredFindMany(filter);
+      const total = await this.sm.count(filter.queries);
+      return {
+        total,
+        page: filter.skip,
+        size: filter.limit,
+        items: this.factory.toResponseDTO(entities),
+      };
     } catch (error) {
       return Promise.reject(error);
     }

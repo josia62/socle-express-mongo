@@ -1,25 +1,34 @@
 import { morphism } from "morphism";
 
-export abstract class GenericFactory<TDo extends object, TRequestDto extends object, TResponseDto extends object> {
+export abstract class GenericFactory<TDo, TRequestDto, TResponseDto> {
+  protected targetRequestDtoSchema;
+
+  protected targetResponseDtoSchema;
+
+  protected targetDoSchema;
+
   protected mapper;
 
-  constructor(
-    protected targetDoSchema: any,
-    protected targetRequestDtoSchema: any,
-    protected targetResponseDtoSchema: any,
-  ) {
+  get responseDtoSchema() {
+    return this.targetResponseDtoSchema;
+  }
+
+  constructor(targetDoSchema: any, targetRequestDtoSchema: any, targetResponseDtoSchema: any) {
+    this.targetRequestDtoSchema = targetRequestDtoSchema;
+    this.targetResponseDtoSchema = targetResponseDtoSchema;
+    this.targetDoSchema = targetDoSchema;
     this.mapper = morphism;
   }
 
-  toRequestDto(source: TDo | TDo[]): TRequestDto {
-    return this.mapper(this.targetRequestDtoSchema, source) as TRequestDto;
+  toRequestDTO(source: TDo | TDo[]): TRequestDto {
+    return this.mapper(this.targetRequestDtoSchema, source);
   }
 
-  toResponseDto(source: TDo | TDo[]): TResponseDto {
-    return this.mapper(this.targetResponseDtoSchema, source) as TResponseDto;
+  toResponseDTO(source: TDo | TDo[]): TResponseDto {
+    return this.mapper(this.targetResponseDtoSchema, source);
   }
 
-  toDo(source: TRequestDto | TResponseDto | TRequestDto[] | TResponseDto[]): TDo {
-    return this.mapper(this.targetDoSchema, source) as TDo;
+  toDO(source: TRequestDto | TResponseDto | TRequestDto[] | TResponseDto[]): TDo {
+    return this.mapper(this.targetDoSchema, source);
   }
 }
